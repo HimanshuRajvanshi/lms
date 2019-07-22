@@ -83,7 +83,10 @@
             <label for="middle-name" class="control-label col-md-3 col-sm-3 col-xs-12">Server <span class="required">*</span></label>
             <div class="col-md-6 col-sm-6 col-xs-12">
               <select id="server_id" name="server_id" class="form-control" required>
-                  <option>Select </option>
+                  <option>-- Select Server --</option>
+                  @foreach ($servers as $server)
+                    <option value="{{$server->_id}}">{{$server->name}}</option>
+                  @endforeach
               </select>
             </div>
           </div>

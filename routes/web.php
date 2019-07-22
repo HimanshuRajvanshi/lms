@@ -51,11 +51,14 @@ Route::Get('/add/leave/get/leave','LeaveController@getLeave');
 Route::Get('/add/leave/delete/leave/{id}','LeaveController@deleteLeave');
 
 //Attendance
-Route::get('/upload_attendances', 'AttendanceController@index');    
 Route::get('/upload/attendance/file', 'AttendanceController@uploadAttendance')->name('upload_attendance');
 Route::POST('/upload/attendance/post_attendance', 'AttendanceController@postUploadAttendance')->name('post_upload_attendance');
 Route::Get('/list/attendance','AttendanceController@listAttendance')->name('list_attendance');
 
+//Punch In/out
+Route::POST('/post/punch/time', 'AttendanceController@postPunchTime')->name('post_punch_time');
+
+Route::GET('/test_data','HomeController@index');
 
 
 //this is homepage time zone
@@ -66,4 +69,5 @@ Route::get('/{timezone?}', 'ServerController@externalIncidentList');
 // Route::group(['namespace' => 'Admin', 'prefix' => 'admin'], function(){
 //     Route::get('/',function(){return "testing demo";});
 // });
+
 

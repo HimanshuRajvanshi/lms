@@ -8,24 +8,23 @@
          <!---For Calendar Tab-->   
         <div class="panel panel-primary">
             <div class="panel-heading" id="asdf">
-                Punch In Out Calender  
+                Punch In/Punch Out Calender  
             </div>
             <div id='calendar'></div>
         </div>
-
-
       </div>
     </div>
     
 @endsection                
 
 @section('script')
+
 <script type= text/javascript>
- $('#list').hide();
  $(document).ready(function () {
-  var data = [{title: "9:30 - 7:10", start: "2019-06-01", end: "2019-06-02"},{title: "9:55AM - 8:20PM", start: "2019-06-02", end: "2019-06-03"},{title: "10:00 - 7:00", start: "2019-07-15", end: "2019-07-18"}]
+  // var data = [{title: "9:30 - 7:10", start: "2019-06-01", end: "2019-06-02"},{title: "9:55AM - 8:20PM", start: "2019-06-02", end: "2019-06-03"},{title: "10:00 - 7:00", start: "2019-07-15", end: "2019-07-18"}]
+    var data =<?php print_r(json_encode($attendances)) ?>;
     // console.log(data);  
-     calendar_draw(data);
+    calendar_draw(data);
   })
 
 
@@ -37,8 +36,8 @@
       startEditable: true,
       navLinks: true,
       disableDragging: true,
-      weekNumbers: true, // side show time
-      // editable:true, // for drag and drop
+      // weekNumbers: true, // side show time
+      // editable:true, 
       height:690,
       header: {
         left: 'prev,next today',
@@ -47,26 +46,28 @@
       },
       
       select: function(startDate, endDate,info) {
-        console.log(info);
+        // console.log(info);
        }, 
 
         events: event_lists,
-        // eventRender: function(event, element) {
-        //   element.qtip({
-        //     content: event.description,
-        //     position: {
-        //         my: 'top center',
-        //         at: 'top center',
-        //       },
-        //   });
-        // },
+        eventRender: function(event, element) {
+          element.qtip({
+            content: event.description,
+            position: {
+                my: 'top center',
+                at: 'top center',
+              },
+          });
+        },
        
         // eventClick: function (event) {
         //     console.log(event);
-        //     console.log(event.title);
-        //     // var confirmMsg = confirm("Do you really want to delete?");
-        //     // if (confirmMsg) {
-        //     // }
+        //     var confirmMsg = confirm("Do you really want to edit?");
+        //     if (confirmMsg){
+            
+        //       $("#editModal").modal('show');
+
+        //     }
         // },
       });
   }

@@ -184,17 +184,13 @@
                   <div class="col-md-6">
                     <h2>User Attendance Report</h2>
                   </div>
-                  <div class="col-md-6">
-                    <div id="reportrange" class="pull-right" style="margin-top: 5px; background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #E6E9ED">
-                      <i class="glyphicon glyphicon-calendar fa fa-calendar"></i>
-                      <span>December 30, 2014 - January 28, 2015</span> <b class="caret"></b>
-                    </div>
-                  </div>
                 </div>
-                <!-- start of user-activity-graph -->
-                <div id="graph_bar" style="width:100%; height:280px;"></div>
-                <!-- end of user-activity-graph -->
+                <!---For Calendar -->
+                <div>
+                  <div id='calendar'></div>  
 
+                </div>
+                 <br><br><br> 
                 <div class="" role="tabpanel" data-example-id="togglable-tabs">
                   <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
                     {{-- <li role="presentation" class="active"><a href="#tab_content1" id="home-tab" role="tab" data-toggle="tab" aria-expanded="true">Recent Activity</a>
@@ -205,79 +201,7 @@
                     </li>
                   </ul>
                   <div id="myTabContent" class="tab-content">
-                    {{-- <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="home-tab">
-
-                      <!-- start recent activity -->
-                      <ul class="messages">
-                        <li>
-                          <img src="images/img.jpg" class="avatar" alt="Avatar">
-                          <div class="message_date">
-                            <h3 class="date text-info">24</h3>
-                            <p class="month">May</p>
-                          </div>
-                          <div class="message_wrapper">
-                            <h4 class="heading">Desmond Davison</h4>
-                            <blockquote class="message">Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua butcher retro keffiyeh dreamcatcher synth.</blockquote>
-                            <br />
-                            <p class="url">
-                              <span class="fs1 text-info" aria-hidden="true" data-icon=""></span>
-                              <a href="#"><i class="fa fa-paperclip"></i> User Acceptance Test.doc </a>
-                            </p>
-                          </div>
-                        </li>
-                        <li>
-                          <img src="images/img.jpg" class="avatar" alt="Avatar">
-                          <div class="message_date">
-                            <h3 class="date text-error">21</h3>
-                            <p class="month">May</p>
-                          </div>
-                          <div class="message_wrapper">
-                            <h4 class="heading">Brian Michaels</h4>
-                            <blockquote class="message">Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua butcher retro keffiyeh dreamcatcher synth.</blockquote>
-                            <br />
-                            <p class="url">
-                              <span class="fs1" aria-hidden="true" data-icon=""></span>
-                              <a href="#" data-original-title="">Download</a>
-                            </p>
-                          </div>
-                        </li>
-                        <li>
-                          <img src="images/img.jpg" class="avatar" alt="Avatar">
-                          <div class="message_date">
-                            <h3 class="date text-info">24</h3>
-                            <p class="month">May</p>
-                          </div>
-                          <div class="message_wrapper">
-                            <h4 class="heading">Desmond Davison</h4>
-                            <blockquote class="message">Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua butcher retro keffiyeh dreamcatcher synth.</blockquote>
-                            <br />
-                            <p class="url">
-                              <span class="fs1 text-info" aria-hidden="true" data-icon=""></span>
-                              <a href="#"><i class="fa fa-paperclip"></i> User Acceptance Test.doc </a>
-                            </p>
-                          </div>
-                        </li>
-                        <li>
-                          <img src="images/img.jpg" class="avatar" alt="Avatar">
-                          <div class="message_date">
-                            <h3 class="date text-error">21</h3>
-                            <p class="month">May</p>
-                          </div>
-                          <div class="message_wrapper">
-                            <h4 class="heading">Brian Michaels</h4>
-                            <blockquote class="message">Raw denim you probably haven't heard of them jean shorts Austin. Nesciunt tofu stumptown aliqua butcher retro keffiyeh dreamcatcher synth.</blockquote>
-                            <br />
-                            <p class="url">
-                              <span class="fs1" aria-hidden="true" data-icon=""></span>
-                              <a href="#" data-original-title="">Download</a>
-                            </p>
-                          </div>
-                        </li>
-
-                      </ul>
-                      <!-- end recent activity -->
-
-                    </div> --}}
+                   
                     <div role="tabpanel" class="tab-pane fade active in" id="tab_content2" aria-labelledby="profile-tab">
 
                       <!-- start user projects -->
@@ -356,11 +280,145 @@
 </div>
 
 
+          <!-- Modal -->
+          <div class="modal fade" id="editModal" role="dialog">
+            <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Edit Punch In/Out Time</h4>
+              </div>
+              <div class="modal-body">
+
+              {!! Form::open(array('url' => route('post_punch_time'),'method'=>'POST', 'id'=>'post_punch_time','name'=>'post_punch_time','class'=>"form-horizontal form-label-left" ,'enctype'=>'multipart/form-data')) !!}
+                  {!! csrf_field() !!}
+                <input type="hidden" name="attendanceId" Id="attendanceId"/>
+                <input type="hidden" name="start_date" Id="start_date"/>
+                <input type="hidden" name="employeeId" Id="employeeId"/>
+                
+
+                <div class="form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Punch In<span class="required">*</span></label>
+                  <div class="col-md-8 col-sm-8 col-xs-12">
+                    <input type="text" name="punch_in" id="punch_in"  class="form-control"  required autocomplete="off"/>
+                  </div>
+                </div> 
+              
+
+                <div class="form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Punch Out<span class="required">*</span></label>
+                  <div class="col-md-8 col-sm-8 col-xs-12">
+                    <input type="text" name="punch_out" id="leavedate"  class="form-control" required autocomplete="off"/>
+                  </div>
+                </div> 
+
+                <div class="form-group">
+                  <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Description<span class="required">*</span></label>
+                  <div class="col-md-8 col-sm-8 col-xs-12">
+                    <input type="text" name="description" id="description"  class="form-control" required autocomplete="off"/>
+                  </div>
+                </div> 
+
+              </div>
+
+              <div class="form-group">
+                  <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                    <button type="submit" name="submit" id="submit" class="btn btn-success" >Submit</button>
+                    <button type="reset" class="btn btn-primary">Reset</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+          <br><br>
+              
+          {!! Form::close() !!}
+
+            </div>
+            </div>
+          </div>
+
+
+
 @endsection
 
 
 @section('script')
-<script>
+<script type= text/javascript>
+  $(document).ready(function () {
+     var data =<?php print_r(json_encode($attendances)) ?>;
+     console.log(data);  
+     calendar_draw(data);
+   })
+ 
+ 
+   function calendar_draw(event_lists){
+     $('#calendar').fullCalendar({
+       plugins: [ 'interaction', 'dayGrid', 'timeGrid','dayGridPlugin'],
+       selectable: true,
+       eventLimit: true,
+       startEditable: true,
+       navLinks: true,
+       disableDragging: true,
+       editable:true, 
+       draggable: false,
+
+       height:450,
+       header: {
+         left: 'prev,next today',
+         center: 'title',
+         right: 'month,agendaWeek'
+       },
+       
+       select: function(startDate, endDate,info) {
+        isWeekend = false;
+
+        var employeeId="<?php echo $user->user_code; ?>";
+
+        var start_date=formatDate(startDate);
+        $("#start_date").val(start_date);
+        $("#employeeId").val(employeeId);
+        $("#editModal").modal('show');
+
+        }, 
+ 
+         events: event_lists,
+        //  eventRender: function(event, element) {
+        //    element.qtip({
+        //      content: event.description,
+        //      position: {
+        //          my: 'bottom left',
+        //          at: 'bottom left',
+        //        },
+        //    });
+        //  },
+        
+         eventClick: function (event) {
+            console.log(event);
+            var confirmMsg = confirm("Do you really want to edit?");
+            if (confirmMsg){
+              var punch_in_tmp=event.title;
+              var tmp=punch_in_tmp.replace("-","");
+              $("#punch_in").val(tmp);
+              $("#attendanceId").val(event._id);
+              $("#start_date").val(event.start._i);
+              $("#editModal").modal('show');
+            }
+        },
+       });
+   }
+ 
+  //for start date change formate
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth()+1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+    return [year, month, day].join('-');
+}
+
         $(function() {
           var day_data = [{
             "period": "Jan",
@@ -406,4 +464,5 @@
         });
       </script>
 
-      @endsection
+@endsection
+      

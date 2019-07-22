@@ -187,6 +187,19 @@
                     </div>
                   </div>
                    
+                  <div class="form-group">
+                    <label class="control-label col-md-3 col-sm-3 col-xs-12" for="emergency_number">Manager<span class="required">*</span></label>
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                      <select id="manager_id" name="manager_id" class="form-control">
+                        <option value="">--- Select Manager---</option>
+                          @foreach ($users as $user)
+                      <option value="{{$user->id}}">{{$user->name}}</option>
+                          @endforeach
+                      </select>
+                  </div>
+                </div>
+
+
                     <div class="form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="emergency_number">Photo</label>
                         <div class="col-md-6 col-sm-6 col-xs-12">

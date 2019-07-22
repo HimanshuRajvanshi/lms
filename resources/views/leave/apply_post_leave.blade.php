@@ -8,7 +8,7 @@ $role_name=$users['user']->getRole->name;
 $active_calendar = '';
 $active_list = '';
 
-if($role_name == 'Admin'){
+if($role_name == 'Admin' || $role_name == 'Manager'){
   $active_list = 'in active';
 }else{
   $active_calendar = 'in active';
@@ -18,7 +18,7 @@ if($role_name == 'Admin'){
 <div class="right_col" role="main">
     <div class="container">
 
-        @if($role_name != 'Admin') 
+       @if($role_name != 'Admin' && $role_name != 'Manager') 
           <p>*For Edit leave click on leave titile</p>
           <ul class="nav nav-tabs">
               <li class="active"><a href="#calendars">Calendar</a></li>
@@ -34,7 +34,6 @@ if($role_name == 'Admin'){
             </div>
             <div id='calendar'></div>
         </div>
-
         <!---List-->   
         <div class="col-md-12 col-sm-12 col-xs-12 tab-pane fade <?php echo $active_list ?>" id="list">
             <div class="panel panel-primary">    
@@ -46,7 +45,7 @@ if($role_name == 'Admin'){
                   <thead>
                      <tr>
                        <th>#</th>
-                       @if($role_name == 'Admin') 
+                       @if($role_name == 'Admin' || $role_name == 'Manager') 
                         <th>User Name</th>
                        @endif 
                        <th>Leave Type</th>
@@ -68,10 +67,13 @@ if($role_name == 'Admin'){
                @php $key++ @endphp
                  <tr>
                    <td>{{$key++}}</td>
-                   @if($role_name == 'Admin')  
-                    <td>{{$apply_leave->getUserName->name}}</td>
+                   @if($role_name == 'Admin' || $role_name == 'Manager')  
+                    <td>
+                      @if(isset($apply_leave->getUserName))
+                        {{$apply_leave->getUserName->name}}
+                      @endif
+                    </td>
                    @endif 
-
                    <td>{{$apply_leave->getLeaveType->leave_name}}</td>
                    <td>{{$apply_leave->leave_start_date}}</td>
                    <td>{{$apply_leave->leave_end_date}}</td>
@@ -79,18 +81,16 @@ if($role_name == 'Admin'){
                    <td>{{ str_limit($apply_leave->leave_reason, $limit = 50, $end = '...') }}</td>
                    <td>{{$apply_leave->phone}}</td>
                    <td>{{date('d-M-Y',strtotime($apply_leave->created_at))}}</td>
-                   @if($role_name != 'Admin')  
-                   @if($apply_leave->leave_status == 'Pending')
-                    <td><a href="{{route('edit_leave',$apply_leave->id)}}"><button type="button" class="btn btn-info btn-sm"><i class="far fa-edit"></i>
-                    </button></a></td>
-                   @else
+                   @if($role_name != 'Admin' || $role_name == 'Manager')  
+                    @if($apply_leave->leave_status == 'Pending')
+                      <td><a href="{{route('edit_leave',$apply_leave->id)}}"><button type="button" class="btn btn-info btn-sm"><i class="far fa-edit"></i>
+                      </button></a></td>
+                    @else
                    <td><button type="button" class="btn btn-info btn-sm"><i class="fa fa-check"></i></button></td>
                     @endif 
-
                    @endif   
-
                    <td> 
-                       @if($role_name == 'Admin')
+                       @if($role_name == 'Admin' || $role_name == 'Manager')
                            @if($apply_leave->leave_status == 'Pending')
                                <button type="button" class="btn btn-danger btn-sm" onclick="leaveStatus('{{$apply_leave->id}}','Rejected')">Reject</button>
                                <button type="button" class="btn btn-success btn-sm" onclick="leaveStatus('{{$apply_leave->id}}','Approved')">Approve</button>
@@ -118,13 +118,12 @@ if($role_name == 'Admin'){
                </tbody>
                @endif
            </table>
+           {{ $apply_leaves->onEachSide(2)->links() }}
        </div>
        </div>
       </div>
     </div>
   
-
-
       </div>
     </div>
     
@@ -134,7 +133,8 @@ if($role_name == 'Admin'){
           <div class="modal-content">
             <div class="modal-header">
               <button type="button" class="close" data-dismiss="modal">&times;</button>
-              <h4 class="modal-title">Apply Leave</h4>
+              <h3 class="modal-title">Apply Leave</h3>
+              <h2 class="modal-title text-center">Total CL:-{!! !empty($users['user']->leave_balance['casual_leave']) ?  $users['user']->leave_balance['casual_leave'] : 0!!}  &nbsp&nbsp&nbsp&nbsp Total EL:-{!! !empty($users['user']->leave_balance['earn_leave']) ? $users['user']->leave_balance['earn_leave'] : 0!!}</h2>
             </div>
             <div class="modal-body">
                 {!! Form::open(array('url' => route('post_leave'),'method'=>'POST', 'id'=>'post_leave_apply','name'=>'post_leave_apply','class'=>"form-horizontal form-label-left" ,'enctype'=>'multipart/form-data')) !!}
@@ -144,7 +144,7 @@ if($role_name == 'Admin'){
                     <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Leave Type <span class="required">*</span></label>
                       <div class="col-md-6 col-sm-6 col-xs-12">
                         <select name="leave_Id" id="leave_Id" class="form-control"> 
-                          <option selected="" >Select</option> --}}
+                          <option value="" >Select</option>
                             @foreach ($leavesTypes as $leavesType)
                                   <option value="{{ $leavesType->id }}">{{ $leavesType->leave_name}}</option>
                                   {{-- <option value="{{ $leavesType->id }}" {{($leaveApply->leave_type_Id == $leavesType->id )? 'selected' : '' }}>{{ $leavesType->leave_name }}</option>  --}}
@@ -184,7 +184,7 @@ if($role_name == 'Admin'){
                     </div>
 
                     <div class="form-group">
-                      <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">Contact no. during leave<span class="required">*</span></label>
+                      <label class="control-label col-md-3 col-sm-3 col-xs-12" for="first-name">During leave Contact no.<span class="required">*</span></label>
                        <div class="col-md-6 col-sm-6 col-xs-12">
                          {!! Form::number('phone', isset($leaveApply) ? $leaveApply->phone:old('phone'), array("id" => "phone", 'placeholder' => 'Enter phone number','class' => 'form-control col-md-7 col-xs-12','required')) !!}
                       </div>
@@ -201,10 +201,9 @@ if($role_name == 'Admin'){
                   </div>
                   {!! Form::close() !!}
 
-            
             </div>
           </div>
-        </div>
+        </div>  
       </div>
 
 @endsection                
@@ -214,18 +213,17 @@ if($role_name == 'Admin'){
 
 <script type= text/javascript>
   $(document).ready(function(){
-  $(".nav-tabs a").click(function(){
-    $(this).tab('show');
-  });
+    $(".nav-tabs a").click(function(){
+      $(this).tab('show');
+    });
   }); 
 
  $('input[name="leavedate"]').daterangepicker({
-    timePicker: true,
+    timePicker: false,
     defaultDate: false,
-    startDate: moment().startOf('hour'),
-    endDate: moment().startOf('hour').add(32, 'hour'),
+    // endDate: moment().startOf('hour').add(48, 'hour'),
     locale: {
-      format: 'M/DD hh:mm A'
+      format: 'YYYY-MM-DD'
     }
   });
 
@@ -244,6 +242,7 @@ if($role_name == 'Admin'){
 
 $(document).ready(function () {
     var data = <?php echo json_encode($events); ?>;
+    console.log(data);
       calendar_draw(data.original.events);
   })
 
@@ -257,19 +256,21 @@ $(document).ready(function () {
 
   function calendar_draw(event_lists){
     $('#calendar').fullCalendar({
-      plugins: [ 'interaction', 'dayGrid', 'timeGrid','dayGridPlugin'],
+      plugins: [ 'interaction', 'dayGrid', 'timeGrid','dayGridPlugin','interactionPlugin'],
       selectable: true,
-      editable: true,
+      editable: false,
       eventLimit: true,
-      startEditable: true,
       navLinks: true,
       draggable: false,
+      startEditable:false,
+      // hiddenDays: [ 0 ],//for sunday hide
       height:690,
       header: {
         left: 'prev,next today',
         center: 'title',
         right: 'month,agendaWeek,agendaDay'
-      },
+      }, 
+      // defaultView: 'month',
 
       select: function(startDate, endDate) {
          var enddate2 = new Date(endDate);
@@ -280,12 +281,14 @@ $(document).ready(function () {
          var aa = moment(start_date, 'YYYY/MM/DD');
          var bb = moment(end_data, 'YYYY/MM/DD');
          var total_days = bb.diff(aa, 'days')+1;
-         $('#calendarEdit').hide();
+        //  $('#calendarEdit').hide();
          $("#myModal").modal('show');
          $("#leaveStartDate").val(start_date);
          $("#leaveEndDate").val(end_data);
-         $("#total_days").val(total_days);
          
+         var res = start_date+' - '+end_data;//For Show into Calendar 
+         $("#leavedate").val(res);
+         $("#total_days").val(total_days);
        }, 
 
         events: event_lists,
@@ -299,6 +302,26 @@ $(document).ready(function () {
               },
           });
 
+          if(event.className != 'holiday' && event.className != 'week_off' && event.className != 'attendance'){
+             //for close button 
+              element.append( "<span class='closeon'>X</span>" );
+              element.find(".closeon").click(function() {
+                var confirmMsg = confirm("Do you really want to delete?");
+                if (confirmMsg) {
+                    $('#calendar').fullCalendar('removeEvents',event._id);
+                    $.ajax({
+                          url:'/add/leave/delete/leave/'+event._id,
+                          type: "GET",
+                          success: function (events) {
+                                // console.log(events)
+                                // alert("Leave Successfull deleted.");
+                                toastr.success("Leave Successfull deleted.");
+                              },
+                        });
+                    }
+                });
+          }
+
         if (event.className == 'Pending') {
             element.css({
                 'background-color': '#337ab',
@@ -309,35 +332,39 @@ $(document).ready(function () {
             'background-color': '#B22222',
             'border-color': '#B22222'
           });
+          
+          }else if (event.className == 'holiday') {
+            element.css({
+            'backgroundColor': '#FF4500',
+            'border-color': '#FF4500',
+            'textColor':'#000000'
+          });
+        }else if (event.className == 'week_off') {
+            element.css({
+            'backgroundColor': '#FF0000',
+            'border-color': '#FF0000',
+            // 'textColor':'#000000'
+          });
+        }else if (event.className == 'attendance') {
+            element.css({
+            'backgroundColor': '#808080',
+            'border-color': '#808080',
+          });
           } else {
             element.css({
             'background-color': '#006400',
             'border-color': '#006400'
           });
           }
-
-          //form Delete Event  
-          element.append( "<span class='closeon'>X</span>" );
-          element.find(".closeon").click(function() {
-            var confirmMsg = confirm("Do you really want to delete?");
-            if (confirmMsg) {
-                $('#calendar').fullCalendar('removeEvents',event._id);
-                $.ajax({
-                      url:'/add/leave/delete/leave/'+event._id,
-                      type: "GET",
-                      success: function (events) {
-                            // console.log(events)
-                            // alert("Leave Successfull deleted.");
-                            toastr.success("Leave Successfull deleted.");
-                          },
-                    });
-              }
-            });
         },
-        
+        viewRender: function (view, element){
+            intervalStart = view.intervalStart;
+            intervalEnd = view.intervalEnd;
+        },
         //For Edit Event
         eventClick: function (event) {
-            // console.log(event);
+          if(event.className != 'holiday' && event.className != 'week_off'){
+              // console.log(event);
             var confirmMsg = confirm("Do you really want to edit?");
             if (confirmMsg) {
                 $('#calendarEdit').show();
@@ -347,10 +374,10 @@ $(document).ready(function () {
                 $("#leaveOldId").val(event.id);
                 $("#myModal").modal('show');
             }
+          }
         },
-      });
+     });
   }
-
 
 //for start date change formate
 function formatDate(date) {
@@ -388,3 +415,4 @@ function leaveStatus(id,type){
  </script>
  
 @endsection
+

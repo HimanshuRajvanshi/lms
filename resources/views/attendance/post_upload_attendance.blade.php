@@ -25,7 +25,7 @@
                 </div>
                 <div class="x_content">
 
-                  <p>Please upload only csv or excel file.</p>
+                  <p>Please upload only txt file.</p>
                   {{-- <form action="post_attendance" class="dropzone dz-clickable" style="border: 1px solid #e5e5e5; height: 150px; "> --}}
                     <form action="post_attendance" method="post" enctype="multipart/form-data">
                       {!! csrf_field() !!}

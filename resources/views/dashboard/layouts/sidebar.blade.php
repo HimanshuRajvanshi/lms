@@ -30,7 +30,7 @@
                             <ul class="nav child_menu" style="display: none">
                             <li><a href="/add/user/page">Add User</a>
                               </li>
-                            <li><a href="/list/user">List User</a>
+                            <li><a href="/list/user">View User</a>
                               </li>
                             </ul>
                           </li>'
@@ -38,20 +38,28 @@
   
                         <li><a><i class="fa fa-calendar"></i> Leave Managment <span class="fa fa-chevron-down"></span></a>
                           <ul class="nav child_menu" style="display: none">
-                          <li><a href="{{route('add_leave')}}">Apply Leave</a>
-                            </li>
-                          {{-- <li><a href="{{route('list_apply_leave')}}">List Leave</a></li> --}}
+                              @if($role_name == 'Admin' || $role_name == 'Manager')
+                                <li><a href="{{route('add_leave')}}">View Leave</a></li>
+                              @endif
+
+                              @if($role_name == 'Employee')
+                              <li><a href="{{route('add_leave')}}">My Calendar</a></li>
+                              @endif    
                           </ul>
                         </li>
 
+                        @if($role_name == 'Admin')
                         <li><a><i class="fa fa-clock-o"></i> Attendance <span class="fa fa-chevron-down"></span></a>
                           <ul class="nav child_menu" style="display: none">
-                          <li><a href="{{route('upload_attendance')}}">Upload Attendance</a></li>
-                          <li><a href="{{route('list_attendance')}}">View Attendance</a></li>
-                          
+                             <li><a href="/upload/attendance/file">Upload Attendance</a></li>
+                          {{-- @if($role_name == 'Employee')
+                            <li><a href="/list/attendance">View Attendance</a></li>
+                          @endif --}}
                           </ul>
                         </li>
-                        
+                        @endif
+
+
                         <li><a><i class="fa fa-bar-chart-o"></i>Server Report <span class="fa fa-chevron-down"></span></a>
                           <ul class="nav child_menu" style="display: none">
                           <li><a href="{{route('server_list')}}">Servers</a>
